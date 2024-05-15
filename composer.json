@@ -1,0 +1,13 @@
+{
+    "name": "faton/htdocs",
+    "type": "library",
+    "require": {
+        "phpmailer/phpmailer": "^6.9"
+    },
+    "authors": [
+        {
+            "name": "lostspaceship",
+            "email": "08akali@gmail.com"
+        }
+    ]
+}

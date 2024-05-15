@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>ArduinoAimbot</title>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport"/>
+    <link href="assets/css/main.css" rel="stylesheet"/>
+    <noscript>
+        <link href="assets/css/noscript.css" rel="stylesheet"/>
+    </noscript>
+</head>
+
+<body class="is-preload ftn">
+<div id="page-wrapper">
+    <header id="header">
+        <h1 id="logo"><a href="index.html">FTN</a></h1>
+        <nav id="nav">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>
+                    <a href="#">Projects</a>
+                    <ul>
+                        <li><a href="project1.html">Arduino Leonardo</a></li>
+                        <li><a href="project2.html">2D Top Down Game</a></li>
+                        <li><a href="project3.html">Random Akali Skin Chooser</a></li>
+                        <li>
+                            <!--	<a href="#">Miscellaneous</a>
+                                <ul>
+                                    <li><a href="#">Option 1</a></li>
+                                    <li><a href="#">Option 2</a></li>
+                                    <li><a href="#">Option 3</a></li>
+                                    <li><a href="#">Option 4</a></li>
+                                </ul> -->
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="feedback.html">Feedback</a></li>
+                <!-- <li><a href="#" class="button primary">Sign Up</a></li> -->
+            </ul>
+        </nav>
+    </header>
+    <div class="wrapper style1" id="main">
+        <div class="container">
+            <header class="major">
+                <h2>Color Based Aimbot</h2>
+                <p>Een aimbot gebaseerd op het detecteren van kleuren outlines!</p>
+                <a href="https://github.com/lostspaceship/ColorBasedAimbot" target="_blank">Github Link</a> <br>
+                <a href="https://youtu.be/LdpuvWVBskc" target="_blank">Video Showcase</a> <br>
+
+            </header>
+            <section>
+                <p>De Aimbot werkt als software voor kleurdetectie, waarbij een techniek wordt toegepast om de muis naar
+                    de gedetecteerde kleuren te verplaatsen. De Arduino wordt aangestuurd door de code in de Arduino
+                    IDE, en dit alles gebeurt zonder gebruik te maken van seriële communicatie.
+
+                    De Aimbot is geschreven in Python, terwijl de Arduino-muissimulatie is geprogrammeerd in C++. Zie de
+                    code for de Arduino hieronder.</p>
+            </section>
+            <pre><code>#include Mouse.h
+#include Wire.h
+#include SPI.h>
+#include usbhub.h
+#include hidboot.h
+
+USB Usb;
+USBHub Hub(&Usb);
+
+byte bf[2];
+
+HIDBoot USB_HID_PROTOCOL_MOUSE HidMouse(&Usb);
+
+String myString;
+int j = 0;
+int c = 0;
+int e = 0;
+int lmb = 0;
+int rmb = 0;
+int mmb = 0;
+int dx = 0;
+int dy = 0;
+int arr[2];
+int arrv[8];
+
+class MouseRptParser : public MouseReportParser
+{
+protected:
+    void OnMouseMove(MOUSEINFO *mi);
+    void OnLeftButtonUp(MOUSEINFO *mi);
+    void OnLeftButtonDown(MOUSEINFO *mi);
+    void OnRightButtonUp(MOUSEINFO *mi);
+    void OnRightButtonDown(MOUSEINFO *mi);
+    void OnMiddleButtonUp(MOUSEINFO *mi);
+    void OnMiddleButtonDown(MOUSEINFO *mi);
+};
+
+void MouseRptParser::OnMouseMove(MOUSEINFO *mi)
+{
+    dx = mi->dX;
+    dy = mi->dY;
+}
+
+void MouseRptParser::OnLeftButtonUp(MOUSEINFO *mi)
+{
+    lmb = 0;
+}
+
+void MouseRptParser::OnLeftButtonDown(MOUSEINFO *mi)
+{
+    lmb = 1;
+}
+
+void MouseRptParser::OnRightButtonUp(MOUSEINFO *mi)
+{
+    rmb = 0;
+}
+
+void MouseRptParser::OnRightButtonDown(MOUSEINFO *mi)
+{
+    rmb = 1;
+}
+
+void MouseRptParser::OnMiddleButtonUp(MOUSEINFO *mi)
+{
+    mmb = 0;
+}
+
+void MouseRptParser::OnMiddleButtonDown(MOUSEINFO *mi)
+{
+    mmb = 1;
+}
+
+MouseRptParser Prs;
+
+void setup()
+{
+    delay(5000);
+    Mouse.begin();
+    Serial.begin(115200);
+    Serial.setTimeout(1);
+    Usb.Init();
+    HidMouse.SetReportParser(0, &Prs);
+}
+
+void loop()
+{
+    dx = 0;
+    dy = 0;
+    j = 0;
+    c = 0;
+    e = 0;
+    Usb.Task(); //clicking
+
+    if (lmb == 0)
+    {
+        Mouse.release(MOUSE_LEFT);
+    }
+    else if (lmb == 1)
+    {
+        Mouse.press(MOUSE_LEFT);
+    }
+
+    if (rmb == 0)
+    {
+        Mouse.release(MOUSE_RIGHT);
+    }
+    else if (rmb == 1)
+    {
+        Mouse.press(MOUSE_RIGHT);
+    }
+
+    if (mmb == 0)
+    {
+        Mouse.release(MOUSE_MIDDLE);
+    }
+    else if (mmb == 1)
+    {
+        Mouse.press(MOUSE_MIDDLE);
+    }
+    if (Serial.available() > 0)
+    {
+        Serial.readBytes(bf, 2);
+        int x = bf[0];
+        int y = bf[1];
+
+        // Convert the values back to signed integers
+        if (x > 127)
+        {
+            x -= 256;
+        }
+
+        if (y > 127)
+        {
+            y -= 256;
+        }
+
+        Mouse.move(x, y, 0);
+    }
+}
+					</code></pre>
+
+        </div>
+    </div>
+    <footer id="footer">
+        <ul class="icons">
+            <li><a class="icon brands alt fa-linkedin-in" href="https://www.linkedin.com/in/faton-salieski-96a9442b1/"
+                   target="_blank"><span class="label">LinkedIn</span></a></li>
+            <li><a class="icon brands alt fa-github" href="https://github.com/lostspaceship" target="_blank"><span
+                    class="label">GitHub</span></a></li>
+            <li><a class="icon solid alt fa-envelope" href="mailto:fsalieski2004@gmail.com" target="_blank"><span
+                    class="label">Email</span></a></li>
+        </ul>
+    </footer>
+</div>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/jquery.scrolly.min.js"></script>
+<script src="assets/js/jquery.dropotron.min.js"></script>
+<script src="assets/js/jquery.scrollex.min.js"></script>
+<script src="assets/js/browser.min.js"></script>
+<script src="assets/js/breakpoints.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

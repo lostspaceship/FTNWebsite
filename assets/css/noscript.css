@@ -1,0 +1,7 @@
+	body.ftn.is-preload:before {
+		display: none;
+	}
+
+	body.ftn.is-preload:after {
+		display: none;
+	}
